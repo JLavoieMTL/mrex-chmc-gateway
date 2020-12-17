@@ -59,7 +59,7 @@ export class CHMCParser {
           const hasValueAndAccuracy =
             tDataListLength === tHeadLength * 6 ? true : false;
 
-          const tData = $(tDataElem).text();
+          let tData = $(tDataElem).text();
           const header = headers[tBodyIndex];
           const headerLength = header.length;
           let topHeaderAttr = hasValueAndAccuracy
@@ -74,20 +74,23 @@ export class CHMCParser {
           if (!tableData.hasOwnProperty(topHeaderAttr)) {
             tableData[topHeaderAttr] = {};
           }
+
+
           if (hasOnlyValue) {
             tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
-              value: tData,
+              value: isNaN(parseFloat(tData)) ? null : parseFloat(tData),
             };
+            
           } else if (hasValueAndAccuracy) {
             if (tDataIndex % 2 === 0) {
               tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
                 ...tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)],
-                value: tData,
+                value: isNaN(parseFloat(tData)) ? null : parseFloat(tData),
               };
             } else {
               tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
                 ...tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)],
-                accuracy: tData,
+                accuracy: tData.trim(),
               };
             }
           }
@@ -96,7 +99,7 @@ export class CHMCParser {
         tableList[tableNameList[tBodyIndex]] = tableData;
       });
     });
-    console.log(JSON.stringify(tableList))
+
     return tableList;
   }
 
@@ -104,7 +107,7 @@ export class CHMCParser {
     const res = await axios.post(
       'https://www03.cmhc-schl.gc.ca/hmip-pimh/en/Profile/DetailsPrimaryRentalMarket',
       {
-        geographyId: geographyId,
+        geographyId,
         t: 7,
       },
     );
