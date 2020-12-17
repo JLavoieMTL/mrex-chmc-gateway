@@ -69,18 +69,16 @@ export class CHMCParser {
             ? tHead[Math.floor(tDataIndex / (headerLength * 2))]
             : tHead[Math.floor(tDataIndex / headerLength)];
 
-          topHeaderAttr = `20${topHeaderAttr.split('-')[1]}`
+          topHeaderAttr = `20${topHeaderAttr.split('-')[1]}`;
 
           if (!tableData.hasOwnProperty(topHeaderAttr)) {
             tableData[topHeaderAttr] = {};
           }
 
-
           if (hasOnlyValue) {
             tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
               value: isNaN(parseFloat(tData)) ? null : parseFloat(tData),
             };
-            
           } else if (hasValueAndAccuracy) {
             if (tDataIndex % 2 === 0) {
               tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
@@ -88,9 +86,10 @@ export class CHMCParser {
                 value: isNaN(parseFloat(tData)) ? null : parseFloat(tData),
               };
             } else {
+
               tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
                 ...tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)],
-                accuracy: tData.trim(),
+                accuracy: ['a','b','c','d'].includes(tData.trim()) ? tData.trim() : null,
               };
             }
           }
@@ -120,11 +119,11 @@ export class CHMCParser {
       case '1 Bedroom':
         return '1BR';
       case '2 Bedroom':
-        return '2BR'
+        return '2BR';
       case '3 Bedroom +':
-          return '3BR'
+        return '3BR';
       default:
-        return name.toLowerCase()
+        return name.toLowerCase();
     }
   }
 }
