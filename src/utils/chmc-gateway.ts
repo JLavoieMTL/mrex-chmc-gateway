@@ -62,29 +62,31 @@ export class CHMCParser {
           const tData = $(tDataElem).text();
           const header = headers[tBodyIndex];
           const headerLength = header.length;
-          const topHeaderAttr = hasValueAndAccuracy
+          let topHeaderAttr = hasValueAndAccuracy
             ? header[Math.floor((tDataIndex % (headerLength * 2)) / 2)]
             : header[tDataIndex % headerLength];
           const LeftHeaderAttr = hasValueAndAccuracy
             ? tHead[Math.floor(tDataIndex / (headerLength * 2))]
             : tHead[Math.floor(tDataIndex / headerLength)];
 
+          topHeaderAttr = `20${topHeaderAttr.split('-')[1]}`
+
           if (!tableData.hasOwnProperty(topHeaderAttr)) {
             tableData[topHeaderAttr] = {};
           }
           if (hasOnlyValue) {
-            tableData[topHeaderAttr][LeftHeaderAttr] = {
+            tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
               value: tData,
             };
           } else if (hasValueAndAccuracy) {
             if (tDataIndex % 2 === 0) {
-              tableData[topHeaderAttr][LeftHeaderAttr] = {
-                ...tableData[topHeaderAttr][LeftHeaderAttr],
+              tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
+                ...tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)],
                 value: tData,
               };
             } else {
-              tableData[topHeaderAttr][LeftHeaderAttr] = {
-                ...tableData[topHeaderAttr][LeftHeaderAttr],
+              tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)] = {
+                ...tableData[topHeaderAttr][this.getBedRoom(LeftHeaderAttr)],
                 accuracy: tData,
               };
             }
@@ -102,11 +104,24 @@ export class CHMCParser {
     const res = await axios.post(
       'https://www03.cmhc-schl.gc.ca/hmip-pimh/en/Profile/DetailsPrimaryRentalMarket',
       {
-        geographyId,
+        geographyId: '10600600104.00',
         t: 7,
       },
     );
 
     return res.data;
+  }
+
+  getBedRoom(name: string) {
+    switch (name) {
+      case '1 Bedroom':
+        return '1BR';
+      case '2 Bedroom':
+        return '2BR'
+      case '3 Bedroom +':
+          return '3BR'
+      default:
+        return name.toLowerCase()
+    }
   }
 }
