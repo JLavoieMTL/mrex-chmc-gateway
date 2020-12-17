@@ -96,7 +96,7 @@ export class CHMCParser {
         tableList[tableNameList[tBodyIndex]] = tableData;
       });
     });
-
+    console.log(JSON.stringify(tableList))
     return tableList;
   }
 
@@ -104,7 +104,7 @@ export class CHMCParser {
     const res = await axios.post(
       'https://www03.cmhc-schl.gc.ca/hmip-pimh/en/Profile/DetailsPrimaryRentalMarket',
       {
-        geographyId: '10600600104.00',
+        geographyId: geographyId,
         t: 7,
       },
     );
